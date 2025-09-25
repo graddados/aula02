@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>RMarkdown e tipos de dados e objetos no R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content=" Renata Oliveira" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"x9d1cdf0cc1e4ad3b6fb5223fef6e644","expires":1}</script>
+    <script src="libs/himalaya/himalaya.js"></script>
+    <script src="libs/js-cookie/js.cookie.js"></script>
+    <link href="libs/editable/editable.css" rel="stylesheet" />
+    <script src="libs/editable/editable.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <script src="libs/xaringanExtra_fit-screen/fit-screen.js"></script>
+    <link href="libs/xaringanExtra-extra-styles/xaringanExtra-extra-styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="slides.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# RMarkdown e tipos de dados e objetos no R
+]
+.subtitle[
+## Aula 02
+]
+.author[
+### <br></br>Renata Oliveira
+]
+
+---
+
+
+
+
+
+layout: true
+  
+&lt;div class="my-footer"&gt;
+&lt;span&gt;
+&lt;a href="https://places.education" target="_blank"&gt;https://places.education&lt;/a&gt;
+&lt;/span&gt;
+&lt;/div&gt; 
+
+---
+
+
+
+
+
+<style>:root{--panel-tab-font-family:inherit;}</style>
+
+
+
+
+
+
+
+class: center, middle
+
+## Retrospecto
+
+---
+
+## Modelo conceitual da análise de dados
+
+![Modelo de Data Science](https://retaoliveira.github.io/relements/figures/dataR.png)
+
+---
+
+# Erro de instalação do PANDOC
+
+- Rode: 
+```r
+remove.packages("tinytex")
+```
+
+
+- Reinicie o RStudio e rode:
+```r
+install.packages('tinytex')
+tinytex::install_tinytex() 
+```
+
+---
+
+## Uma pequena lista (por enquanto) de funções essenciais  
+
+- As funções são (na maioria das vezes) verbos, seguidos pelo objeto a que serão aplicados entre parênteses:
+```r
+do_this(to_this)
+do_that(to_this, to_that, with_those)
+```
+
+- Os pacotes são instalados com a função `install.packages` e carregados com a função `library`, uma vez por sessão:
+```r
+install.packages("package_name")
+library(package_name)
+```
+---
+
+## Funções essenciais
+
+- apresenta as seis primeiras linhas do banco de dados
+```r
+head(mtcars)
+```
+
+- mostra os tipos de variáveis e a estrutura do dado
+```r
+str(mtcars)
+```
+
+- mostra a classe da base de dados
+```r
+class(mtcars)
+```
+
+---
+
+- mostra a dimensão do objeto
+```r
+dim(mtcars)
+```
+- mostra os nomes das variáveis (colunas)
+```r
+names(mtcars)
+```
+
+- A função `c()` permite a construção de vetores por meio alocação de valores em posições distintas de vetores.  
+```r
+v1 &lt;- c("pato", "sapo", "pato", "gato", "pato")
+```
+
+- As colunas (variáveis) em dataframes são acessadas com `$`:
+```r
+dataframe$var_name
+```
+
+---
+
+## Tipos de dados
+
+&lt;img src="img/continuous_discrete.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Tipos de dados
+
+&lt;img src="img/nominal_ordinal_binary.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Tipos de dados
+
+- Os tipos de dados mais comuns são `character`, `numeric`, `factor`e `logical`.
+
+Character
+```r
+character &lt;- "arroz"
+class(character)
+```
+
+Numeric
+```r
+numeric &lt;- 7
+class(numeric)
+```
+
+---
+
+## Tipos de dados
+
+Factor
+```r
+factor &lt;- as.factor(c("pato", "gato", "rato", "gato", "pato"))
+class(factor)
+levels(factor)
+```
+
+---
+
+## Tipos de dados
+
+Logical
+```r
+logical &lt;- as.logical(c(0,1,1,0))
+class(logical)
+```
+
+---
+
+## Tipos de classes de objetos no R
+
+- As classes de organização dos dados mais comuns são `vector`, `list`, `matrix` e `dataframe`.
+
+.question[
+Um vetor é uma seqüência de elementos de dados do mesmo tipo básico. Os elementos em um vetor são oficialmente chamados de componentes. No entanto, nós os chamaremos apenas de elementos e assumiremos que cada elemento ocupa uma posição no vetor.
+]
+
+---
+
+## Tipos de classes de objetos no R
+
+#### Índice em vetores:
+
+```r
+s &lt;- c("aa", "bb", "cc", "dd", "ee") 
+s[3] 
+s[-3]
+s[10]
+
+```
+
+---
+
+## Tipos de classes de objetos no R
+
+.question[
+Uma matriz é uma coleção de elementos de dados dispostos em um layout bidimensional retangular. A seguir, um exemplo de uma matriz com 2 filas e 3 colunas.]
+
+---
+
+## Tipos de classes de objetos no R
+
+```r
+A = matrix(c(2, 4, 3, 1, 5, 7), # the data elements 
+     nrow=2,                    # number of rows 
+     ncol=3,                    # number of columns 
+     byrow = TRUE)              # fill matrix by rows 
+A
+
+A[2, 3]
+```    
+
+---
+
+## Tipos de classes de objetos no R
+
+.question[
+Uma lista é um vetor genérico que contém diferentes tipos de objetos.
+]
+
+```r
+n &lt;- c(2, 3, 5) 
+s &lt;- c("aa", "bb", "cc", "dd", "ee") 
+x &lt;- list(n, s, 3)   # x contains copies of n, s, b
+x
+```
+
+---
+
+## Tipos de classes de objetos no R
+
+```r
+slice &lt;- x[2]
+slice
+
+x[[2]] # member - can be modified
+
+```
+
+---
+
+## Tipos de classes de objetos no R
+
+.question[
+Um `dataframe` é usado para armazenar tabelas de dados. É uma lista de vetores de igual comprimento. Por exemplo, a seguinte variável `df` é uma `dataframe` contendo três vetores n, s, b.
+]
+
+```r
+n &lt;- c(2, 3, 5) 
+s &lt;- c("aa", "bb", "cc") 
+b &lt;- c(TRUE, FALSE, TRUE) 
+df &lt;- data.frame(n, s, b)       # df is a data frame
+df
+```
+
+
+---
+
+## Comunicação com RMarkdown
+
+
+
+## Reprodutibilidade
+
+.question[
+O que significa ser "reprodutível"?
+]
+
+--
+
+Objetivos no curto prazo:
+- As tabelas e figuras são reprodutíveis a partir do código e dos dados?
+- O código realmente faz o que você acha que faz?
+- Além do que foi feito, é claro *por que* foi feito? 
+
+Objetivos no longo prazo:
+- O código pode ser usado para outros dados?
+- Você pode estender o código para fazer outras coisas?
+
+---
+
+## RMarkdown
+
+&lt;img src="img/render.png" width="100%" style="display: block; margin: auto;" /&gt;
+.footnote[
+Alison Hill [Teaching in Production](https://rstudio-education.github.io/teaching-in-production/slides/index.html#1)
+]
+
+---
+
+## RMarkdown
+
+.panelset[
+.panel[.panel-name[O que é?]
+
+Vou colocar aqui algumas informações-chave sobre a construção geral de informações a partir do uso do RMarkdown. Entretanto, informações adicionais podem ser obtidas de maneira detalhada no site: 
+
++ [Documentos dinâmicos no R by Fernando Mayer &amp; Walmes Zeviani](http://cursos.leg.ufpr.br/prr/capDocDin.html)
+]
+
+.panel[.panel-name[Organização]
+### Seções e subseções
+
+Para demarcar seções e subseções, utilize os `hashtags`. 
+
+### Listas e ordenação
+
+Basta enumerar:
+
+1. Item 1
+2. Item 2
+
+]
+
+.panel[.panel-name[Imagens]
+
+![Figura 1: RMarkdown](https://retaoliveira.github.io/relements/figures/allison_horst/rmarkdown_rockstar.png){width=50%}
+
+]
+
+.panel[.panel-name[Chunks]
+
+```r
+x &lt;- rnorm(30)
+x
+
+```
+]
+
+.panel[.panel-name[Mais chunks]
+```r
+plot(x)
+```
+]
+]
+
+---
+
+.panelset[
+
+.panel[.panel-name[Visualização]
+
+Também podemos fazer um histograma dessa variável simulada
+
+```r
+hist(x)
+```
+
+]
+
+.panel[.panel-name[YAML]
+
+#### `YAML` (Yet Another Markup Language)
+
+No `YAML`, os dados são escritos em forma de lista aninhada. Os metadados em `YAML` são colocados sempre no início de um documento, e são delimitados por `---`. 
+]
+
+.panel[.panel-name[Gerando...]
+
+`knitr`
+
+]
+
+.panel[.panel-name[WOW!]
+
+Na [galeria do RStudio](https://rmarkdown.rstudio.com/gallery.html) diferentes estruturas de informação produzida por meio de `RMarkdown` podem ser encontradas! 
+
+]
+
+.panel[.panel-name[RPubs]
+
+
+No RStudio, crie um novo documento `R Markdown` escolhendo `Arquivo | Novo | R Markdown`.
+Clique no botão `Knit HTML` na barra de ferramentas do doc para visualizar seu documento.
+Na janela de pré-visualização, clique no botão `Publicar`.
+
+É um processo em duas etapas. Na primeira etapa, você precisa registrar uma conta `RPubs` ou fazer o login, caso já tenha uma. Você escreve o título de seu documento e dá uma breve descrição (para que outros possam encontrar seu trabalho a partir da busca). 
+
+Uma vez terminado e clicando no botão `Continue` na parte inferior, você irá diretamente para o artigo publicado. 
+
+Você pode optar por atualizar seu conteúdo.
+
+
+]
+]
+
+
+---
+
+
+## Ambiente de trabalho do Rmarkdown
+
+.tip[
+O ambiente de seu documento R Markdown é separado do Console!
+]
+
+Lembre-se disso e espere que ele _o morda_ algumas vezes enquanto você aprende a trabalhar 
+com R Markdown!
+
+---
+
+## Ambiente de trabalho do Rmarkdown
+
+.pull-left[
+Primeiro, rode em seu console:
+
+
+```r
+x &lt;- 2
+x * 3
+```
+
+
+.question[
+Tudo parece bem, eh?
+]
+]
+
+--
+
+.pull-right[
+Digite então o código em um chunk no seu documento Rmarkdown
+
+
+```r
+x * 3
+```
+
+
+.question[
+O que aconteceu? Como fazer para rodá-lo?
+]
+]
+
+.tip[
+Dicas:    
+`Ctrl + Alt + i`   
+`Ctrl + Enter`
+]
+
+
+---
+
+## Como usaremos o R Markdown?
+
+- Cada tarefa / relatório / projeto / etc. é um documento R Markdown
+- Você sempre terá um modelo de documento R Markdown para começar a atividade ou uma orientação quanto ao `template`
+
+---
+
+## Encaminhamentos:
+
+1. Tutorial de R - Swirl
+2. Atividades no SIGAA
+3. Projeto integrador
+
+&lt;br&gt;&lt;/br&gt;
+
+.center[
+## ENGAJAMENTO!
+]
+
+---
+
+### Sua vez!
+
+1. Gere um documento R markdown no RStudio considerando o `Default Output Format` `HTML`.
+2. `knit` o documento para diferentes outputs. Escreva algum conteúdo próprio. 
+3. Crie um chunk e gere um dataframe 
+4. `knit` o documento novamente. 
+
+### Outra exploração:
+
+1. Instale o package `flexdashboard` (install.packages("flexdashboard"))
+2. Gere um documento desse tipo no RStudio.
+3. Inclua dados e representações simples. Pode utilizar o `mtcars` e as funções `plot()`, `hist()` e `boxplot()`   
+4. Gere um `summary()` de algum dos vetores que compõe o dataframe. 
+
+---
+
+### Fazendo uma apresentação no R!
+
+1. Instale os pacotes install.packages(c("xaringan", "xaringanExtra", "xaringanthemer"))
+2. Gere um arquivo R markdown do tipo Ninja Xaringan Themer. 
+3. `knit` o documento. 
+4. Visite o site [color-hex](https://www.color-hex.com/) e altere o padrão de cores da apresentação.
+
+---
+
+class: inverse, center, middle
+
+# DÚVIDAS?
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+  "ratio": "16:9",
+  "highlightLines": true,
+  "highlightStyle": "solarized-light",
+  "countIncrementalSlides": false,
+  "slideNumberFormat": "<div class=\"progress-bar-container\">\n  <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">\n  </div>\n</div>\n"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].append

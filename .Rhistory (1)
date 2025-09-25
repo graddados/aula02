@@ -1,0 +1,512 @@
+install.packages(c("aopdata", "broom", "class", "dtplyr", "foreign", "ggfun", "mapproj", "MASS", "nlme", "nloptr", "nnet", "opentripplanner", "osmdata", "quantreg", "raster", "reticulate", "rpart", "spatial", "spdep", "terra", "testthat", "yaml"))
+install.packages(c("tidyverse", "shiny", "shinyWidgets","leaflet"))
+devtools::install_github("JSSpaulding/rgeoprofile")
+install.packages(c("brew", "doParallel", "dplyr", "iterators", "lme4", "quantreg", "RCurl", "Rttf2pt1", "sf", "shinyWidgets", "showtext", "units", "V8"))
+install.packages(c("quantreg", "showtext", "units"))
+tinytex::check_installed()
+library(sf)
+install.packages(c("quantreg", "showtext", "units"))
+install.packages(c("quantreg", "showtext", "units"))
+install.packages("showtext")
+install.packages("units")
+install.packages(eoffice)
+install.packages("officedown")
+install.packages("officer")
+install.packages(c("arrow", "cli", "conquer", "crayon", "gdtools", "parsedate", "quantreg", "r5r", "showtext", "spatstat.geom", "systemfonts", "units"))
+install.packages("rocker")
+install.packages(c("blogdown", "bookdown", "Cairo", "caret", "clipr", "cluster", "colorspace", "commonmark", "conquer", "crayon", "desc", "DT", "evaluate", "exactextractr", "fansi", "fasttime", "future", "geojsonsf", "gert", "ggfun", "git2r", "glue", "igraph", "imager", "insight", "jqr", "jsonlite", "knitr", "leaflet", "lme4", "lmtest", "loo", "magrittr", "maptools", "MASS", "Matrix", "mgcv", "nlme", "officedown", "officer", "openintro", "openssl", "parallelly", "pdftools", "plyr", "processx", "RColorBrewer", "Rcpp", "RcppArmadillo", "RcppEigen", "readxl", "recipes", "rgdal", "rgrass7", "rlang", "rmarkdown", "rprojroot", "rstantools", "sass", "sf", "sfnetworks", "spatstat", "spatstat.core", "spatstat.data", "spatstat.geom", "spatstat.linnet", "spdep", "survival", "sysfonts", "terra", "testthat", "tidygraph", "tidyselect", "tinytex", "tmap", "tseries", "tzdb", "uuid", "vctrs", "waldo", "withr", "xaringan", "xfun", "XML", "yaml"))
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(kableExtra)
+library(tidyverse)
+library(janitor)
+library(prettydoc)
+library(reshape2)
+library(hrbrthemes)
+library(qwraps2)
+library(tmap)
+library(rgdal)
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(GGally)
+library(mlbench)
+library(tidyverse)
+library(hrbrthemes)
+library(circlize)
+library(igraph)
+library(RColorBrewer)
+library(treemap)
+library(kableExtra)
+library(magrittr)
+library(expss)
+library(foreign)
+library(corrplot)
+library(gridExtra)
+library(sjPlot)
+library(knitr)
+library(gmodels)
+library(flextable)
+library(lsr)
+library(viridis)
+library(sf)
+library(raster)
+library(dplyr)
+library(spData)
+library(tmap)    # for static and interactive maps
+library(leaflet) # for interactive maps
+library(ggplot2) # tidyverse data visualization package
+rm_accent <- function(str,pattern="all") {
+# Rotinas e funções úteis V 1.0
+# rm.accent - REMOVE ACENTOS DE PALAVRAS
+# Função que tira todos os acentos e pontuações de um vetor de strings.
+# Parâmetros:
+# str - vetor de strings que terão seus acentos retirados.
+# patterns - vetor de strings com um ou mais elementos indicando quais acentos deverão ser retirados.
+#            Para indicar quais acentos deverão ser retirados, um vetor com os símbolos deverão ser passados.
+#            Exemplo: pattern = c("´", "^") retirará os acentos agudos e circunflexos apenas.
+#            Outras palavras aceitas: "all" (retira todos os acentos, que são "´", "`", "^", "~", "¨", "ç")
+if(!is.character(str))
+str <- as.character(str)
+pattern <- unique(pattern)
+if(any(pattern=="Ç"))
+pattern[pattern=="Ç"] <- "ç"
+symbols <- c(
+acute = "áéíóúÁÉÍÓÚýÝ",
+grave = "àèìòùÀÈÌÒÙ",
+circunflex = "âêîôûÂÊÎÔÛ",
+tilde = "ãõÃÕñÑ",
+umlaut = "äëïöüÄËÏÖÜÿ",
+cedil = "çÇ"
+)
+nudeSymbols <- c(
+acute = "aeiouAEIOUyY",
+grave = "aeiouAEIOU",
+circunflex = "aeiouAEIOU",
+tilde = "aoAOnN",
+umlaut = "aeiouAEIOUy",
+cedil = "cC"
+)
+accentTypes <- c("´","`","^","~","¨","ç")
+if(any(c("all","al","a","todos","t","to","tod","todo")%in%pattern)) # opcao retirar todos
+return(chartr(paste(symbols, collapse=""), paste(nudeSymbols, collapse=""), str))
+for(i in which(accentTypes%in%pattern))
+str <- chartr(symbols[i],nudeSymbols[i], str)
+return(str)
+}
+dados_bh <- read_delim("data/dados_bh_final.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+# remover " anos"
+dados_bh <- dados_bh %>%
+mutate(idade = str_replace_all(idade, " anos", "")) %>%
+filter(idade != "belo horizonte")
+# 181 amostra.....
+dados_bh <- dados_bh %>%
+mutate(genero = case_when(genero == "homem" ~ "Homem",
+genero == "mulher" ~ "Mulher"))
+dados_bh <- dados_bh %>%
+mutate(idade = str_trim(idade)) %>%
+mutate(idade = as.numeric(idade)) %>%
+mutate(idade_cat = case_when(idade < 20 ~ "< 20", idade >= 20 & idade < 30  ~ "20-29", idade >= 30 & idade < 40  ~ "30-39", idade >= 40 & idade < 50 ~ "40-49", idade >= 50 & idade < 60  ~ "50-59", idade >= 60 ~ ">= 60" )) %>%
+mutate(idade_cat = as.factor(idade_cat))
+dados_bh[dados_bh == "n/a" ] <- NA # trocar NA
+dados_bh <- dados_bh %>%
+mutate(isolamento = case_when(iso_parcial == "sim" ~ "isolamento parcial",
+iso_total == "sim" ~ "isolamento total",
+iso_total == "nao" & iso_parcial == "nao" ~ "sem isolamento")) %>%
+mutate(risco = case_when(sou_risco == "nao" & moro_risco == "nao" ~ "sem risco",
+sou_risco == "sim" | moro_risco == "sim" ~ "em risco")) %>%
+dplyr::select(!c(moro_risco, sou_risco, iso_total, iso_parcial))
+dados_bh <- dados_bh %>%
+mutate(freq_compras_depois = case_when(freq_compras_depois == 'entre 3 e 5 vezes por semana' ~ 'entre 3 e 6 vezes por semana',
+freq_compras_depois == 'nao houve necessidade de deslocamento' ~ "NA",
+freq_compras_depois == "eventualmente" ~ "eventualmente",
+freq_compras_depois == "ate 2 vezes por semana" ~ "ate 2 vezes por semana"),
+freq_compras_antes = case_when(freq_compras_antes == "sem necessidade de deslocamento" ~ "NA",
+freq_compras_antes == "entre 3 e 6 vezes por semana" ~ "entre 3 e 6 vezes por semana" ,
+freq_compras_antes == "eventualmente" ~ "eventualmente",
+freq_compras_antes == "ate 2 vezes por semana" ~ "ate 2 vezes por semana",
+freq_compras_antes == 'diariamente' ~ 'diariamente'),
+freq_serv_antes = case_when(freq_compras_antes == "sem necessidade de deslocamento" ~ "NA",
+freq_compras_antes == "entre 3 e 6 vezes por semana" ~ "entre 3 e 6 vezes por semana" ,
+freq_compras_antes == "eventualmente" ~ "eventualmente",
+freq_compras_antes == "ate 2 vezes por semana" ~ "ate 2 vezes por semana",
+freq_compras_antes == 'diariamente' ~ 'diariamente'),
+freq_serv_depois = case_when(freq_serv_depois == 'entre 3 e 5 vezes por semana' ~ 'entre 3 e 6 vezes por semana',
+freq_serv_depois == 'nao houve necessidade de deslocamento' ~ "NA",
+freq_serv_depois == "eventualmente" ~ "eventualmente",
+freq_serv_depois == "ate 2 vezes por semana" ~ "ate 2 vezes por semana"))
+dados_bh[dados_bh == "NA" ] <- NA # trocar NA
+dados_bh <- dados_bh %>%
+mutate_if(is.character,as.factor)
+col_names <- data.frame(colnames(dados_bh))
+dados_antes <- dados_bh %>%
+dplyr::select(!(freq_compras_depois:star_contato_depois))
+dados_depois <- dados_bh %>%
+dplyr::select(!(freq_compras_antes:star_contato_antes))
+bairros <- rgdal::readOGR("shapefiles/BAIRRO_OFICIAL/BAIRRO_OFICIAL.shp", encoding = "UTF-8")
+bairros <- rgdal::readOGR("shapefiles/BAIRRO_OFICIAL/BAIRRO_OFICIAL.shp", encoding = "UTF-8")
+bairros_pop <- rgdal::readOGR("shapefiles/BAIRRO_POPULAR/BAIRRO_POPULAR.shp", encoding = "UTF-8")
+bairros <- st_as_sf(bairros)
+bairros <- st_as_sf(bairros)
+bairros_pop <- st_as_sf(bairros_pop)
+bairros_pop <- st_as_sf(bairros_pop)
+regional <- rgdal::readOGR("shapefiles/REGIONAL/REGIONAL.shp", encoding = "UTF-8")
+regional <- st_as_sf(regional)
+bairros_pop <- rgdal::readOGR("shapefiles/BAIRRO_POPULAR/BAIRRO_POPULAR.shp", encoding = "UTF-8")
+bairros <- st_as_sf(bairros)
+bairros_pop <- st_as_sf(bairros_pop)
+regional <- rgdal::readOGR("shapefiles/REGIONAL/REGIONAL.shp", encoding = "UTF-8")
+regional <- st_as_sf(regional)
+pop <- rgdal::readOGR("shapefiles/POP_DOMIC_BAIRRO_2010/POP_DOMIC_BAIRRO_2010.shp", encoding = "UTF-8")
+regional <- st_as_sf(regional)
+pop <- rgdal::readOGR("shapefiles/POP_DOMIC_BAIRRO_2010/POP_DOMIC_BAIRRO_2010.shp", encoding = "UTF-8")
+pop <- st_as_sf(pop)
+regional_bairro <- read_delim("regional_bairros.csv",
+delim = ";", escape_double = FALSE, trim_ws = TRUE)
+pop <- rgdal::readOGR("shapefiles/POP_DOMIC_BAIRRO_2010/POP_DOMIC_BAIRRO_2010.shp", encoding = "UTF-8")
+pop <- st_as_sf(pop)
+regional_bairro <- read_delim("regional_bairros.csv",
+delim = ";", escape_double = FALSE, trim_ws = TRUE)
+bairros <- bairros %>%
+mutate(NOME = rm_accent(NOME)) %>%
+mutate(NOME = tolower(NOME))
+antes <- dados_antes %>%
+mutate(bairro_moradia = as.factor(as.character(bairro_moradia))) %>%
+mutate(bairro_moradia = str_replace_all(bairro_moradia, 'bairro ', '')) %>%
+mutate(bairro_moradia = str_replace_all(bairro_moradia, 'nova suica', 'nova suissa')) %>%
+mutate(bairro_moradia = str_replace_all(bairro_moradia, 'coreu', 'coracao eucaristico')) %>%
+filter(bairro_moradia != 'o mesmo')
+table(antes$bairro_moradia)
+antes_final <- antes %>%
+left_join(regional_bairro)
+bairros <- rgdal::readOGR("shapefiles/BAIRRO_OFICIAL/BAIRRO_OFICIAL.shp", encoding = "UTF-8")
+bairros_pop <- rgdal::readOGR("shapefiles/BAIRRO_POPULAR/BAIRRO_POPULAR.shp", encoding = "UTF-8")
+bairros <- st_as_sf(bairros)
+bairros_pop <- st_as_sf(bairros_pop)
+regional <- rgdal::readOGR("shapefiles/REGIONAL/REGIONAL.shp", encoding = "UTF-8")
+regional <- st_as_sf(regional)
+pop <- rgdal::readOGR("shapefiles/POP_DOMIC_BAIRRO_2010/POP_DOMIC_BAIRRO_2010.shp", encoding = "UTF-8")
+pop <- st_as_sf(pop)
+regional_bairro <- read_delim("regional_bairros.csv",
+delim = ";", escape_double = FALSE, trim_ws = TRUE)
+bairros <- bairros %>%
+mutate(NOME = rm_accent(NOME)) %>%
+mutate(NOME = tolower(NOME))
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(kableExtra)
+library(tidyverse)
+library(janitor)
+library(prettydoc)
+library(reshape2)
+library(hrbrthemes)
+library(qwraps2)
+library(tmap)
+library(rgdal)
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(GGally)
+library(mlbench)
+library(tidyverse)
+library(hrbrthemes)
+library(circlize)
+library(igraph)
+library(RColorBrewer)
+library(treemap)
+library(kableExtra)
+library(magrittr)
+library(expss)
+library(foreign)
+library(corrplot)
+library(gridExtra)
+library(sjPlot)
+library(knitr)
+library(gmodels)
+library(flextable)
+library(lsr)
+library(viridis)
+library(sf)
+library(raster)
+library(dplyr)
+library(spData)
+library(tmap)    # for static and interactive maps
+library(leaflet) # for interactive maps
+library(ggplot2) # tidyverse data visualization package
+install.packages(c("blob", "bookdown", "broom", "caret", "checkmate", "cli", "datamods", "dplyr", "exactextractr", "extrafont", "future", "future.apply", "ggeffects", "ggimage", "glmnet", "haven", "igraph", "knitr", "leafem", "maptools", "mapview", "MASS", "matrixStats", "minpack.lm", "parallelly", "pdftools", "phosphoricons", "polynom", "ps", "RcppArmadillo", "RcppEigen", "reshape", "rgdal", "rmarkdown", "rstan", "scales", "sjlabelled", "sp", "spatstat.data", "spatstat.sparse", "spdep", "splancs", "testthat", "uuid", "vctrs", "vegan", "webshot", "xaringan", "zoo"))
+install.packages(c("blob", "bookdown", "broom", "caret", "checkmate", "cli", "datamods", "dplyr", "exactextractr", "extrafont", "future", "future.apply", "ggeffects", "ggimage", "glmnet", "haven", "igraph", "knitr", "leafem", "maptools", "mapview", "MASS", "matrixStats", "minpack.lm", "parallelly", "pdftools", "phosphoricons", "polynom", "ps", "RcppArmadillo", "RcppEigen", "reshape", "rgdal", "rmarkdown", "rstan", "scales", "sjlabelled", "sp", "spatstat.data", "spatstat.sparse", "spdep", "splancs", "testthat", "uuid", "vctrs", "vegan", "webshot", "xaringan", "zoo"))
+library(aopdata)
+install.packages(c("bayestestR", "car", "dichromat", "esquisse", "ggplot2", "httr", "nloptr", "quantmod", "quantreg", "rgdal", "rgrass7", "tibble", "tseries"))
+install.packages("nloptr")
+install.packages("MASS")
+install.packages("DiagrammeR")
+install.packages("flextable")
+install.packages("arrow")
+install.packages("geoarrow")
+install.packages('datapasta')
+remotes::install_github("devOpifex/ambiorix")
+install.packages(c("dbplyr", "sp"))
+install.packages(c("e1071", "xaringanExtra"))
+install.packages(c("AsioHeaders", "bookdown", "DBI", "flextable", "gtools", "igraph", "nlme", "officer", "osmdata", "performance", "processx", "ps", "RcppArmadillo", "RCurl", "tinytex", "xaringan", "XML"))
+install.packages("updater")
+install.packages("spatstat")
+install.packages("spdep")
+install.packages("spatialreg")
+install.packages(gstat)
+install.packages('gstat')
+devtools::install_github("AndreaCirilloAC/updateR")
+updateR(auto = TRUE, .Rprofile = NULL)
+library(updateR)
+updateR(auto = TRUE, .Rprofile = NULL)
+install.packages("spatialsample")
+install.packages("updater")
+updater?
+?updater
+r_version()
+library(updater)
+r_version()
+find_previous_library_location
+find_previous_library_location()
+install_pkgs(lib.loc = NULL)
+devtools::install_github("tidymodels/spatialsample")
+devtools::install_github("tidymodels/spatialsample")
+install.packages(c("dbplyr", "emmeans", "globals", "pkgload", "raster", "rlang", "rsample", "yulab.utils"))
+install.packages(c("bslib", "callr", "devtools", "estimability", "fields", "fontawesome", "future", "gtools", "htmlTable", "htmltools", "igraph", "insight", "lme4", "MASS", "parallelly", "pillar", "processx", "Rcpp", "rlang", "roxygen2", "s2", "sass", "sf", "shiny", "spam", "stars", "stringi", "terra", "tibble", "tidyverse", "xaringanExtra"))
+updater::install_pkgs()
+updater::install_pkgs()
+install.packages("RCurl")
+install.packages("RCurl")
+install.packages("roxygen2")
+install.packages("roxygen2md")
+install.packages("metadat")
+library(devtools)
+install_github("annakrystalli/gaitr")
+install.packages("rrtools")
+devtools::install_github("benmarwick/rrtools")
+tinytex::check_installed()
+tinytex::tl_pkgs()
+tinytex::tlmgr_version()
+tinytex::check_installed()
+tinytex::reinstall_tinytex()
+tinytex::check_installed()
+tinytex::uninstall_tinytex()
+27/4
+4*9
+4*7
+60*0,8
+60*0.8
+tinytex::reinstall_tinytex()
+748*5,5
+748*5.5
+675*5.5
+5.4 * 599
+3200*0.6
+3200+1920
+devtools::install_github('msperlin/GetLattesData')
+devtools::install_github('msperlin/GetLattesData')
+tufterhandout::html_tufte_handout()
+tufterhandout::html_tufte_handout()
+tufterhandout::html_tufte_handout(self_contained = TRUE)
+install.packages("tufte")
+rmarkdown::draft("tufte.Rmd", "tufte_html", "tufte")
+tufte::tufte_handout()
+blogdown:::preview_site()
+install.packages(c("fs", "ggrepel", "openxlsx", "pdftools", "tm"))
+install.packages("knitr")
+install.packages("~/Library/CloudStorage/OneDrive-cefetmg.br/01_disciplinas/IntroR+business/Aulas/knitr_1.42.zip", repos = NULL, type = "win.binary")
+install.packages(c("cachem", "checkmate", "chron", "class", "ggeffects", "graphlayouts", "gtsummary", "KernSmooth", "later", "MASS", "nnet", "openalexR", "profvis", "rlang", "s2", "sass", "servr", "showtext", "survey", "testthat", "tidytransit", "tseries", "units", "viridis", "viridisLite", "vroom", "waldo", "xml2"))
+install.packages(c("arrow", "bookdown", "evaluate", "gdata", "httpuv", "httr", "httr2", "influenceR", "metafor", "mlbench", "qdapTools", "rvg", "scatterplot3d", "spatstat.geom", "spatstat.utils", "waldo", "wk"))
+install.packages("rvg")
+install.packages(snippet)
+install.packages("snippet")
+remotes::install_github("GegznaV/snippets")
+library(snippets)
+snippets::list_snippet_file_backups()
+library(foreign)
+library(fields)
+library(sp)
+library(rgeos)
+library(foreign)
+library(fields)
+library(sp)
+library(maptools)
+library(sf)
+options(digits=5)
+rmbh_poi_2023 <- st_read("C:/Users/Dell/Documents/Dissertação - Desenvolvimento/scripts R/centrality (2)/centrality/data/hex_pois.shp")
+2.99*5.5
+18*12
+devtools::install_github("ipeaGIT/uci")
+library(pacman)
+p_load(uci)
+data_dir <- system.file("extdata", package = "uci")
+grid <- readRDS(file.path(data_dir, "grid_bho.rds"))
+View(grid)
+df <- uci(
+sf_object = grid,
+var_name = 'jobs',
+bootstrap_border = FALSE,
+showProgress = TRUE
+)
+View(df)
+p_load(uci, sf, tidyverse)
+ggplot(data = grid) +
+geom_sf(aes(fill = jobs), color = NA) +
+scale_fill_viridis_c() +
+theme_void()
+View(grid)
+install.packages("duckdb")
+library("DBI")
+con = dbConnect(duckdb::duckdb(), ":memory:")
+library(duckdb)
+install.packages("duckdb")
+install.packages("duckdb")
+install.packages("duckdb")
+install.packages("duckdb")
+library(duckdb)
+library("DBI")
+con = dbConnect(duckdb::duckdb(), ":memory:")
+dbWriteTable(con, "iris", iris)
+dbGetQuery(con, 'SELECT "Species", MIN("Sepal.Width") FROM iris GROUP BY "Species"')
+209+19
+install.packages("geobr")
+install.packages("geobr")
+library(geobr)
+install.packages("geobr")
+a = 5
+b = 4
+a+b
+a = 5
+b = 4
+a + b
+d = c(1, 2, 3, 4)
+d
+e = c(A, B, C, D)
+e = c("A", "B", "C", D")
+e = c("A", "B", "C", "D")
+e = c("A", "B", "C", "D")
+d + e
+d + a
+f = c( "1", "2", "3", "4")
+f+a
+g = data.frame(d, e, f)
+View(g)
+install.packages(c("audio", "bslib", "chromote", "colourpicker", "curl", "duckdb", "emmeans", "fastmatch", "fields", "flexdashboard", "fontawesome", "ggeffects", "ggplot2", "glmnet", "gtable", "httr", "markdown", "Matrix", "MatrixModels", "MESS", "mvtnorm", "osmdata", "patchwork", "proj4", "quantmod", "quantreg", "rbibutils", "Rdpack", "renv", "rmarkdown", "rsample", "rsconnect", "shiny", "shinyscreenshot", "sjPlot", "stars", "survival", "uuid", "wk", "yulab.utils"))
+install.packages(c("bayesplot", "bayestestR", "chromote", "distributional", "GGally", "huxtable", "ISOcodes", "parallelly", "parameters", "quantmod", "RcppArmadillo", "rearrr", "rJava", "rvest", "satellite", "servr", "shp2graph", "spatialreg", "spdep", "survival", "V8", "writexl", "xaringan", "xfun"))
+install.packages(c("accessibility", "arrow", "bookdown", "curl", "deldir", "digest", "duckdb", "flextable", "forecast", "gdtools", "ggraph", "ggsci", "globals", "gmodels", "graphlayouts", "Hmisc", "hrbrthemes", "igraph", "insight", "locfit", "multcompView", "od", "openNLPdata", "parameters", "pkgbuild", "processx", "psych", "qs", "quarto", "ragg", "RcppArmadillo", "RcppEigen", "remotes", "rJava", "rmarkdown", "rstan", "sass", "shinyWidgets", "showtext", "StanHeaders", "stinepack", "sugrrants", "survey", "sysfonts", "systemfonts", "tidyselect", "tinytex", "tm"))
+install.packages(c("arm", "broom.helpers", "bslib", "callr", "codetools", "crul", "data.table", "datawizard", "DT", "duckdb", "effectsize", "emmeans", "ftExtra", "future", "future.apply", "ggeffects", "ggsci", "ggstance", "ggstats", "gh", "htmltools", "httpuv", "httr2", "insight", "kinship2", "knitr", "leaflet", "lintr", "lme4", "matrixStats", "metafor", "munsell", "performance", "pkgdown", "prismatic", "promises", "qpdf", "quanteda", "r5r", "RcppArmadillo", "renv", "rJava", "rsample", "rsconnect", "rstudioapi", "rticles", "servr", "sf", "sfnetworks", "shiny", "shinydashboardPlus", "shinyWidgets", "spatstat", "spatstat.explore", "spatstat.linnet", "spatstat.model", "stars", "styler", "testthat", "tidytext", "xaringan", "xfun"))
+install.packages(c("fs", "future", "ggplot2", "GPArotation", "ps", "ragg", "rlang", "sass", "zoo"))
+v1 <- c(1, 2, TRUE, 4)
+v2 <- c("T", "TRUE", "FALSE", "T")
+v3 <- c("1", "2", "3", "4")
+v4 <- c(1, "4", 4, 1)
+v5 <- c(1, 2, "feijao com arroz")
+v6 <- c("Beatriz", "Pedro", TRUE)
+v7 <- c(T, T, F, T, F, F, 42)
+class(v1)
+knitr::opts_chunk$set(echo = TRUE)
+ggplot(data = starwars, mapping = aes(x = height, y = mass))
+library(tidyverse)
+starwars <- starwars
+View(starwars)
+ggplot(data = starwars, mapping = aes(x = height, y = mass))
+ggplot(data = starwars, mapping = aes(x = height, y = mass)) +
+geom_point()
+ggplot(data = starwars, mapping = aes(x = height, y = mass)) +
+geom_point() +
+labs(title = "Mass vs. height of Starwars characters",
+x = "Height (cm)",
+y = "Weight (kg)")
+View(starwars)
+ggplot(data = starwars, mapping = aes(x = height, y = mass, fill = eye_color)) +
+geom_point() +
+labs(title = "Mass vs. height of Starwars characters",
+x = "Height (cm)",
+y = "Weight (kg)")
+View(starwars)
+ggplot(data = starwars, mapping = aes(x = height, y = mass, fill = as.factor(eye_color))) +
+geom_point() +
+labs(title = "Mass vs. height of Starwars characters",
+x = "Height (cm)",
+y = "Weight (kg)")
+ggplot(data = starwars, mapping = aes(x = height, y = mass, color = as.factor(eye_color))) +
+geom_point() +
+labs(title = "Mass vs. height of Starwars characters",
+x = "Height (cm)",
+y = "Weight (kg)")
+library(pacman)
+p_load(tidyverse, ggplot2, dplyr, tidyr, readr, stringr, lubridate, forcats)
+ggplot(data = starwars, mapping = aes(x = height, y = mass, color = as.factor(eye_color))) +
+geom_point() +
+labs(title = "Mass vs. height of Starwars characters",
+x = "Height (cm)",
+y = "Weight (kg)")
+View(starwars)
+ggplot(data = starwars, mapping = aes(x = height, y = mass, color = as.factor(eye_color))) +
+geom_point() +
+labs(title = "Mass vs. height of Starwars characters",
+x = "Height (cm)",
+y = "Weight (kg)") +
+theme_minimal()
+ggplot(data = starwars, mapping = aes(x = height, y = mass, color = as.factor(eye_color))) +
+geom_point() +
+labs(title = "Mass vs. height of Starwars characters",
+x = "Height (cm)",
+y = "Weight (kg)") +
+theme_minimal()
+library(pacman)
+p_load(tidyverse, ggplot2, dplyr, tidyr, readr, stringr, lubridate, forcats)
+ggplot(data = starwars, mapping = aes(x = height, y = mass, color = as.factor(eye_color))) +
+geom_point() +
+labs(title = "Mass vs. height of Starwars characters",
+x = "Height (cm)",
+y = "Weight (kg)") +
+theme_minimal()
+ggplot(data = starwars, mapping = aes(x = height, y = mass, color = as.factor(eye_color))) +
+geom_point() +
+labs(title = "Mass vs. height of Starwars characters",
+x = "Height (cm)",
+y = "Weight (kg)") +
+theme_minimal() +
+theme(legend.position = "bottom")
+p_load(tidyverse, ggplot2, dplyr, tidyr, readr, stringr, lubridate, forcats, circlize)
+library(pacman)
+p_load(tidyverse, ggplot2, dplyr, tidyr, readr, stringr, lubridate, forcats, circlize)
+# Create an adjacency matrix:
+# a list of connections between 20 origin nodes, and 5 destination nodes:
+numbers <- sample(c(1:1000), 100, replace = T)
+data <- matrix( numbers, ncol=5)
+rownames(data) <- paste0("orig-", seq(1,20))
+colnames(data) <- paste0("dest-", seq(1,5))
+View(data)
+# Create an adjacency matrix:
+# a list of connections between 20 origin nodes, and 5 destination nodes:
+numbers <- sample(c(1:1000), 100, replace = T)
+head(numbers)
+View(data)
+# Create an adjacency matrix:
+# a list of connections between 20 origin nodes, and 5 destination nodes:
+numbers <- sample(c(1:1000), 100, replace = T)
+data <- matrix(numbers, ncol=5)
+View(data)
+numbers
+View(data)
+View(data)
+rownames(data) <- paste0("orig-", seq(1,20))
+colnames(data) <- paste0("dest-", seq(1,5))
+View(data)
+# Make the circular plot
+chordDiagram(data, transparency = 0.5)
+p_load(tidyverse, ggplot2, dplyr, tidyr, readr, stringr, lubridate, forcats, circlize, fivehirtyeight))
+p_load(tidyverse, ggplot2, dplyr, tidyr, readr, stringr, lubridate, forcats, circlize, fivehirtyeight)
+(pacman)
+library(pacman)
+p_load(tidyverse, ggplot2, dplyr, tidyr, readr, stringr, lubridate, forcats, circlize, fivehirtyeight)
+install.packages("tidyverse")
+install.packages("tidyverse")
+256-233
+a = 3
+b <- 5
+A+B
+a+b
+setwd("~/Library/CloudStorage/GoogleDrive-renataoliveira@gmail.com/Meu Drive/02_work/01_disciplinas/2025_2/03_grad_dados/01_aulas/aula02")
+install.packages("countdown")
