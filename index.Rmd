@@ -35,7 +35,6 @@ xaringanExtra::use_editable(expires = 1)
 
 ```{r xaringan-panelset, echo=FALSE}
 xaringanExtra::use_panelset()
-xaringanExtra::style_panelset_tabs(font_family = "inherit")
 ```
 
 ```{r xaringanExtra-clipboard, echo=FALSE}
@@ -521,4 +520,11 @@ Dicas:
 1. Instale os pacotes install.packages(c("xaringan", "xaringanExtra", "xaringanthemer"))
 2. Gere um arquivo R markdown do tipo Ninja Xaringan Themer. 
 3. `knit` o documento. 
-4. Visite o site [color-hex](https://www.color-hex.com/) e altere o padrão de cores da apresentação
+4. Visite o site [color-hex](https://www.color-hex.com/) e altere o padrão de cores da apresentação.
+
+---
+
+class: inverse, center, middle
+
+# DÚVIDAS?
+
